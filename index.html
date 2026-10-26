@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Treine quem não tem computador · Plataforma Vivo Empresas</title>
+<meta name="description" content="Repositor, vigilante, atendente de loja: o treinamento da linha de frente vai para o celular, com trilha por cargo, sem internet e sem e-mail.">
+<meta name="theme-color" content="#380054">
+<link rel="icon" href="assets/marca/vivinho-purpura.svg" type="image/svg+xml">
+<link rel="stylesheet" href="scrollcraft.css">
+<link rel="stylesheet" href="pagina.css">
+</head>
+<body class="travado">
+
+<!-- Carregando: o Vivinho pulsa enquanto a página termina de carregar; quando
+     tudo chegou, as duas folhas de papel se abrem para o estoque. -->
+<div class="carregando" id="carregando" role="status" aria-live="polite">
+  <div class="carregando__folha carregando__folha--esq" aria-hidden="true"></div>
+  <div class="carregando__folha carregando__folha--dir" aria-hidden="true"></div>
+  <div class="carregando__miolo">
+    <div class="pulso" aria-hidden="true">
+      <i></i><i></i><i></i>
+      <img src="assets/marca/vivinho-branco.svg" alt="" width="64" height="64">
+    </div>
+    <span class="carregando__barra" aria-hidden="true"><b id="carregando-barra"></b></span>
+    <span class="sr-only" id="carregando-texto">Carregando a página</span>
+  </div>
+</div>
+
+<a class="pular" href="#custo">Pular a abertura</a>
+
+<header class="barra">
+  <a class="barra__marca" href="#topo" aria-label="Vivo, início da página">
+    <img src="assets/marca/vivo-logo-branco.svg" alt="Vivo" width="92" height="32">
+  </a>
+  <a class="barra__cta" href="#contato">Fale com seu consultor Vivo Empresas</a>
+</header>
+
+<main id="topo">
+
+  <!-- 1 · O PALCO. A rolagem não desce a página: ela troca o cenário.
+       Estoque → posto do vigilante → loja → recuo com os três lado a lado. -->
+  <section id="palco" class="palco" data-sc-act="pin" data-sc-span="6" aria-label="Quem está na linha de frente">
+    <div data-sc-stage class="palco__stage">
+      <div class="cenas" id="cenas" aria-hidden="true"></div>
+
+      <div class="pc" id="pc" aria-hidden="true">
+        <svg viewBox="0 0 420 300" width="420" height="300">
+          <rect x="10" y="10" width="400" height="230" rx="18" fill="#FCF9FD"/>
+          <rect x="34" y="34" width="352" height="182" rx="8" fill="#BD4AFF"/>
+          <rect x="170" y="240" width="80" height="34" fill="#E8DDF0"/>
+          <rect x="110" y="270" width="200" height="22" rx="8" fill="#FCF9FD"/>
+        </svg>
+        <i class="pc__x pc__x--a"></i><i class="pc__x pc__x--b"></i>
+      </div>
+
+      <div class="fala">
+        <h1 class="fala__h">
+          <span class="fala__linha" data-sc-cue="0 0.19 0 0.3">O seu repositor.</span>
+          <span class="fala__linha" data-sc-cue="0.18 0.47">O seu vigilante.</span>
+          <span class="fala__linha" data-sc-cue="0.46 0.74">A sua atendente de loja.</span>
+          <span class="fala__linha fala__linha--forte" data-sc-cue="0.73 1 0.12 0">Eles não têm computador.</span>
+        </h1>
+        <div class="fala__apoio">
+          <p data-sc-cue="0 0.19 0 0.3">Passa o dia entre o estoque e a gôndola.</p>
+          <p data-sc-cue="0.18 0.47">Faz a ronda e cuida do posto, de dia e de noite.</p>
+          <p data-sc-cue="0.46 0.74">Atende no balcão, olhando para o cliente, não para uma tela.</p>
+          <p data-sc-cue="0.82 1 0.2 0">E toda semana chega <mark>gente nova</mark> para treinar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · O CUSTO. Corte seco para o papel claro. -->
+  <section id="custo" class="custo sc-section" data-sc-act="flow" data-sc-drift="#F6EEF9">
+    <div class="sc-wrap custo__grade">
+      <div class="custo__texto" data-sc-in>
+        <h2 class="titulo">Integração lenta <mark>custa caro</mark>.</h2>
+        <p class="sc-lede">Enquanto o novato não aprende, a conta corre. E ela aparece em três lugares.</p>
+      </div>
+
+      <article class="ficha" aria-label="Ficha de integração do novato">
+        <header class="ficha__topo"><span>Ficha de integração</span><span>Novato</span></header>
+        <ul class="ficha__itens" data-sc-in data-sc-stagger="160">
+          <li><span class="ficha__rs" aria-hidden="true">R$</span>Salário pago para quem ainda não está pronto.</li>
+          <li><span class="ficha__rs" aria-hidden="true">R$</span>Instrutor viajando de loja em loja.</li>
+          <li><span class="ficha__rs" aria-hidden="true">R$</span>Loja esperando o novato aprender.</li>
+        </ul>
+        <span class="carimbo" id="carimbo-custo" aria-hidden="true">Custo</span>
+      </article>
+
+      <figure class="polaroide polaroide--custo" data-sc-in>
+        <span class="fita" aria-hidden="true"></span>
+        <img src="assets/clientes/rogerio.webp" width="560" height="535" alt="Rogério, gestor acadêmico, numa conversa gravada em estúdio" loading="lazy">
+        <blockquote>“Muitos deles não têm uma estação de trabalho. Eles trabalham andando.”</blockquote>
+        <figcaption><b>Rogério</b><span>Gestor acadêmico · Organização de saúde</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 3 · A VIRADA. Os três cenários da abertura entram no celular, um por
+       trilha. Depois o wi-fi cai e a trilha continua. -->
+  <section id="virada" class="virada" data-sc-act="pin" data-sc-span="3" data-sc-drift="#4A0070">
+    <div data-sc-stage class="virada__stage">
+      <div class="virada__texto">
+        <h2 class="titulo titulo--claro" data-sc-cue="0 1 0.1 0" data-sc-kinetic="lines">Com a Plataforma Vivo Empresas, o treinamento vai para o celular.</h2>
+        <ul class="selos">
+          <li data-sc-cue="0.34 1 0.15 0">Trilha pronta para cada cargo</li>
+          <li data-sc-cue="0.62 1 0.15 0">Funciona até sem internet</li>
+          <li data-sc-cue="0.8 1 0.15 0">Entra sem e-mail</li>
+        </ul>
+      </div>
+
+      <div class="fone" id="fone" aria-hidden="true">
+        <div class="fone__tela">
+          <div class="fone__status"><span>9:41</span><span class="fone__wifi" id="fone-wifi"></span></div>
+          <div class="fone__topo"><img src="assets/marca/vivinho-branco.svg" alt="" width="22" height="22"><span>Plataforma Vivo Empresas</span></div>
+          <p class="fone__ola">Suas trilhas</p>
+          <ul class="fone__lista">
+            <li class="trilha"><span class="trilha__img" data-cena="estoque"></span><span class="trilha__txt"><b>Repositor</b><i><s></s></i></span></li>
+            <li class="trilha"><span class="trilha__img" data-cena="posto"></span><span class="trilha__txt"><b>Vigilante</b><i><s></s></i></span></li>
+            <li class="trilha"><span class="trilha__img" data-cena="loja"></span><span class="trilha__txt"><b>Atendente de loja</b><i><s></s></i></span></li>
+          </ul>
+          <p class="fone__off" id="fone-off">Sem internet. A trilha continua.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fala de cliente, entre a virada e os números. -->
+  <section class="depoimento sc-section" data-sc-act="flow" data-sc-drift="#380054">
+    <figure class="sc-wrap depoimento__fig" data-sc-in>
+      <div class="polaroide polaroide--inclinada">
+        <span class="fita" aria-hidden="true"></span>
+        <img src="assets/clientes/mayara.webp" width="560" height="535" alt="Mayara Bassi Vilalba, de aquisição de talentos, durante a entrevista" loading="lazy">
+      </div>
+      <div>
+        <blockquote class="depoimento__frase">“Hoje, quando entra um colaborador, ele acessa a plataforma e já tem a trilha de formação inicial.”</blockquote>
+        <figcaption><b>Mayara Bassi Vilalba</b><span>Aquisição de Talentos, T&amp;D · Rede de serviços automotivos</span></figcaption>
+      </div>
+    </figure>
+  </section>
+
+  <!-- 4 · OS RESULTADOS. Número gigante com o cenário de cada pessoa dentro
+       das letras (P9). O cenário anda dentro da letra conforme a rolagem. -->
+  <section class="resultados" aria-labelledby="resultados-t">
+    <div class="sc-wrap"><h2 class="titulo titulo--claro" id="resultados-t" data-sc-in>E isso já dá resultado.</h2></div>
+
+    <article class="caso caso--esq" data-sc-act="flow">
+      <p class="caso__num" data-cena="estoque" aria-hidden="true">−86%</p>
+      <div class="caso__txt" data-sc-in>
+        <h3>86% menos tempo de integração.</h3>
+        <p>Uma <b>rede de atacarejo</b>, com 67 lojas, cortou 86% do tempo que o novato levava para começar.</p>
+      </div>
+    </article>
+
+    <article class="caso caso--dir" data-sc-act="flow">
+      <p class="caso__num" data-cena="posto" aria-hidden="true">1 mês</p>
+      <div class="caso__txt" data-sc-in>
+        <h3>Onboarding de 5 meses para 1 mês.</h3>
+        <p>Uma <b>empresa de segurança</b>, com vigilantes em mais de 10 países e sem computador no posto, encurtou o onboarding e gastou 80% menos com treinamento.</p>
+      </div>
+    </article>
+
+    <article class="caso caso--esq" data-sc-act="flow">
+      <p class="caso__num" data-cena="loja" aria-hidden="true">30 dias</p>
+      <div class="caso__txt" data-sc-in>
+        <h3>Franqueados formados em 30 dias.</h3>
+        <p>Uma <b>rede de alimentação</b>, com mais de 400 lojas, formava franqueados em 3 meses. Hoje, em 30 dias.</p>
+      </div>
+    </article>
+
+    <figure class="sc-wrap depoimento__fig depoimento__fig--inv" data-sc-in>
+      <div class="polaroide">
+        <span class="fita" aria-hidden="true"></span>
+        <img src="assets/clientes/rosana.webp" width="560" height="535" alt="Rosana Mendes, gerente de treinamento, durante a entrevista" loading="lazy">
+      </div>
+      <div>
+        <blockquote class="depoimento__frase">“Coloquei hoje de manhã. À tarde, todo mundo já está sabendo.”</blockquote>
+        <figcaption><b>Rosana Mendes</b><span>Gerente de Treinamento · Rede de alimentação</span></figcaption>
+      </div>
+    </figure>
+  </section>
+
+  <!-- 5 · O FECHAMENTO. O celular desce para o bolso e a página para ali. -->
+  <section id="contato" class="fecho" data-sc-act="flow">
+    <div class="sc-wrap fecho__grade">
+      <div class="fecho__texto">
+        <h2 class="titulo titulo--claro" data-sc-in>Menos tempo de integração é menos <mark>dinheiro parado</mark>.</h2>
+        <p class="sc-lede" data-sc-in>Treine quem não tem computador, no celular que já está no bolso.</p>
+        <button class="botao" type="button" data-sc-in>Fale com seu consultor Vivo Empresas</button>
+      </div>
+      <div class="bolso" aria-hidden="true">
+        <div class="bolso__fone"><span class="bolso__tela"><img src="assets/marca/vivinho-branco.svg" alt="" width="40" height="40"></span></div>
+        <svg class="bolso__frente" viewBox="0 0 320 300" width="320" height="300">
+          <path d="M10 60 Q10 40 30 40 L290 40 Q310 40 310 60 L300 220 Q300 290 230 290 L90 290 Q20 290 20 220 Z" fill="#3B4F8C"/>
+          <path d="M10 60 Q160 110 310 60 L310 46 Q160 96 10 46 Z" fill="#2C3D72"/>
+          <path d="M40 120 Q160 150 280 120" stroke="#FFB84C" stroke-width="4" stroke-dasharray="12 9" fill="none"/>
+          <path d="M60 230 Q160 262 260 230" stroke="#FFB84C" stroke-width="4" stroke-dasharray="12 9" fill="none"/>
+        </svg>
+      </div>
+    </div>
+    <footer class="rodape sc-wrap">
+      <p>Plataforma Vivo Empresas. Resultados de clientes reais, identificados pelo segmento.</p>
+      <img src="assets/marca/vivo-logo-branco.svg" alt="Vivo" width="92" height="32">
+    </footer>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script src="cenas.js"></script>
+<script src="pagina.js"></script>
+</body>
+</html>

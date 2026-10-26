@@ -1,0 +1,9 @@
+lab/node_modules/
+lab/package-lock.json
+lab/desk/
+lab/mob/
+lab/extras/
+lab/harness/
+lab/quadros/
+lab/*.jpg
+lab/*.png
