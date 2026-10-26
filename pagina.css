@@ -71,10 +71,20 @@ mark { background: var(--vivo-rose); color: var(--vivo-roxo); padding: 0 0.14em;
 /* -------------------------------------------------------------------- palco -- */
 .palco__stage { background: radial-gradient(120% 80% at 25% 15%, #7A12B5 0%, var(--vivo-purpura) 40%, var(--vivo-roxo) 100%); }
 .cenas { position: absolute; inset: 0; }
-.cena { position: absolute; inset: 0; overflow: hidden; transform-origin: 50% 50%; visibility: hidden; will-change: transform, opacity; }
+.cena { position: absolute; inset: 0; overflow: hidden; transform-origin: 50% 50%; opacity: 0; will-change: transform, opacity; }
+.cena.oculta { content-visibility: hidden; }
+/* Recuo: medidas antes da escala (o cartão fica a ~1/4 do tamanho na tela). */
+.cena.cartao { border-radius: 46px; box-shadow: 0 0 0 22px var(--papel), 0 56px 110px -20px rgba(20, 0, 35, .55); }
 .camada { position: absolute; inset: 0; will-change: transform; }
 .camada svg { width: 100%; height: 100%; }
 .camada--sombra { filter: drop-shadow(0 8px 7px rgba(56, 0, 84, .26)); }
+/* Durante o mergulho a camada cresce várias vezes: sombra borrada nesse
+   tamanho é o que o iPhone mais sofre para repintar, e em movimento ninguém a vê. */
+.cena.viajando .camada--sombra { filter: none; }
+/* O motor regrava --sc-p no ato a cada quadro. Sem esta barreira, a mudança
+   desce como herança por todos os elementos dos cenários e do celular, e o
+   navegador recalcula o estilo de cada forma a cada rolagem. */
+.palco__stage > .cenas, .palco__stage > .fala, .virada__stage > .fone, .virada__stage > .virada__texto { --sc-p: 0; }
 
 .fala { position: absolute; z-index: 20; left: max(48px, 3.33vw); top: calc(var(--barra-h) + 4.5vh);
   width: min(33rem, 44vw); background: var(--papel); color: var(--vivo-purpura); border-radius: 6px;
@@ -155,7 +165,7 @@ figcaption b { font-size: 1.05rem; }
 .trilha { display: grid; grid-template-columns: 46% 1fr; gap: 10px; align-items: center; }
 .trilha__img { display: block; aspect-ratio: 16 / 10; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(56, 0, 84, .3);
   transform-origin: 50% 50%; will-change: transform; position: relative; z-index: 2; background: #E7D7F1; }
-.trilha__img svg { width: 100%; height: 100%; }
+.trilha__img img { width: 100%; height: 100%; object-fit: cover; }
 .trilha__txt { display: grid; gap: 6px; font-size: clamp(10px, .85vw, 13px); line-height: 1.2; }
 .trilha__txt i { display: block; height: 6px; border-radius: 3px; background: #E6D3F2; overflow: hidden; }
 .trilha__txt s { display: block; height: 100%; background: var(--vivo-purpura); transform-origin: 0 50%; transform: scaleX(0); }
@@ -182,6 +192,9 @@ figcaption b { font-size: 1.05rem; }
   background-position: 50% calc(var(--sc-p, .5) * 100%);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   -webkit-text-stroke: 3px rgba(255, 255, 255, .88); paint-order: stroke fill; }
+.caso__num[data-cena="estoque"] { background-image: url("assets/cenas/estoque.webp"); }
+.caso__num[data-cena="posto"] { background-image: url("assets/cenas/posto.webp"); }
+.caso__num[data-cena="loja"] { background-image: url("assets/cenas/loja.webp"); }
 .caso--dir .caso__num { justify-self: end; }
 .caso__txt { max-width: 34rem; display: grid; gap: var(--sc-3); }
 .caso--esq .caso__txt { justify-self: end; margin-right: 6vw; }

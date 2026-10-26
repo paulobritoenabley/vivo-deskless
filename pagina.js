@@ -72,17 +72,13 @@
     attr(c, 'be', c.be, 'transform', 'rotate(' + (rotE === undefined ? 8 : rotE).toFixed(1) + ' -66 ' + OY + ')');
     attr(c, 'pos', c.pos, 'transform', 'translate(' + (c.base[0] + (dx || 0)).toFixed(1) + ' ' + (c.base[1] + (dy || 0)).toFixed(1) + ') scale(' + c.base[2] + ')');
   }
-  // Respiração e piscada: o tempo só mexe nisso. O resto obedece à rolagem.
-  function vivo(c, t, i) {
-    attr(c, 'corpo', c.corpo, 'transform', reduz ? '' : 'translate(0 ' + (Math.sin(t / 650 + i * 2) * 3).toFixed(1) + ')');
-    var ciclo = (t + i * 1300) % 4200;
-    attr(c, 'olhos', c.olhos, 'transform', ciclo < 130 ? 'translate(0 -424) scale(1 .15) translate(0 424)' : '');
-  }
 
   // --------------------------------------------------------- enquadramento --
   // Cada cena escolhe o próprio recorte para caber na tela: largo no
   // computador, alto e centrado na pessoa no celular em pé.
   var W = 0, H = 0, celular = false, painel = { s: .25, gap: 24, cy: 0 };
+  // Largura e altura, em unidades de cena, da porta por onde a câmera sai.
+  var PORTA = { estoque: [328, 524], posto: [208, 270] };
   function medirPalco() {
     if (!stage.clientWidth || !stage.clientHeight) return;
     W = stage.clientWidth; H = stage.clientHeight;
@@ -98,6 +94,15 @@
       c.camadas.forEach(function (k) { k.svg.setAttribute('viewBox', s); });
       c.ax = (c.alvo[0] - vb[0]) / vb[2] * W;
       c.ay = (c.alvo[1] - vb[1]) / vb[3] * H;
+      // Zoom do mergulho: só o necessário para a porta encher a tela, e não
+      // um número fixo. No celular a porta já ocupa meia tela, então ~2,5x
+      // basta; um zoom fixo de 13x obrigava o iPhone a repintar uma camada
+      // gigante a cada quadro.
+      var porta = PORTA[c.nome];
+      if (porta) {
+        var enche = Math.max(W / (porta[0] / vb[2] * W), H / (porta[1] / vb[3] * H)) * 1.12;
+        c.zoom = c.camadas.map(function (k, j) { return Math.min(1 + (enche - 1) * [1, 1.3, 1.6, 1.9][j], 7); });
+      }
     });
     painel.s = celular ? 0.29 : 0.25;
     painel.gap = celular ? 8 : 26;
@@ -114,19 +119,29 @@
   var MERG1 = [0.12, 0.29], VIGIA = [0.27, 0.45], MERG2 = [0.42, 0.59], ATENDE = [0.57, 0.74],
       RECUO = [0.71, 0.84], RISCA = [0.84, 0.94];
 
-  function mostrar(c, sim) { estilo(c.el, 'visibility', sim ? 'visible' : 'hidden'); }
-  function camadas(c, fn) { c.camadas.forEach(function (k, j) { fn(k, j); }); }
-  function limparPainel(c) {
-    estilo(c.el, 'transform', ''); estilo(c.el, 'borderRadius', ''); estilo(c.el, 'boxShadow', '');
+  // Esconder um cenário NÃO usa visibility: ela é herdada, e trocá-la obriga o
+  // navegador a recalcular o estilo de cada forma do SVG (centenas). Opacidade
+  // e content-visibility valem só para o próprio cenário, que fica guardado
+  // pronto para voltar.
+  function mostrar(c, sim) {
+    if (!sim) estilo(c.el, 'opacity', '0');
+    if (c.oculta !== !sim) { c.oculta = !sim; c.el.classList.toggle('oculta', !sim); }
   }
+  function camadas(c, fn) { c.camadas.forEach(function (k, j) { fn(k, j); }); }
+  function classe(c, nome, sim) {
+    if (c['_' + nome] === sim) return;
+    c['_' + nome] = sim; c.el.classList.toggle(nome, sim);
+  }
+  function limparPainel(c) { estilo(c.el, 'transform', ''); classe(c, 'cartao', false); }
 
   // P1: a câmera entra pela porta. Quanto mais perto a camada, mais ela cresce.
   function mergulho(c, u) {
     var e = Math.pow(u, 1.6);
     estilo(c.el, 'opacity', '1');
+    classe(c, 'viajando', u > 0 && !reduz);
     camadas(c, function (k, j) {
       estilo(k.el, 'transformOrigin', c.ax.toFixed(1) + 'px ' + c.ay.toFixed(1) + 'px');
-      estilo(k.el, 'transform', reduz || u === 0 ? '' : 'scale(' + lerp(1, k.k, e).toFixed(4) + ')');
+      estilo(k.el, 'transform', reduz || u === 0 ? '' : 'scale(' + lerp(1, c.zoom ? c.zoom[j] : k.k, e).toFixed(4) + ')');
       var some = k === c.camadas[c.camadas.length - 1] ? seg(u, 0.15, 0.45) : k.pessoa ? seg(u, 0.2, 0.48) : 0;
       estilo(k.el, 'opacity', (1 - suave(some)).toFixed(3));
     });
@@ -136,6 +151,7 @@
     var w = seg(u, 0.5, 1), e = saida(w);
     estilo(c.el, 'opacity', suave(seg(u, 0.5, reduz ? 0.75 : 0.82)).toFixed(3));
     var inicio = [0.84, 0.74, 0.64, 0.5];
+    classe(c, 'viajando', e < 1 && !reduz);
     camadas(c, function (k, j) {
       estilo(k.el, 'transformOrigin', '50% 58%');
       estilo(k.el, 'transform', reduz || e >= 1 ? '' : 'scale(' + lerp(inicio[j], 1, e).toFixed(4) + ')');
@@ -158,8 +174,9 @@
       }
       estilo(c.el, 'opacity', op.toFixed(3));
       estilo(c.el, 'transform', 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + sc.toFixed(4) + ')');
-      estilo(c.el, 'borderRadius', (lerp(0, 12, e) / sc).toFixed(1) + 'px');
-      estilo(c.el, 'boxShadow', '0 0 0 ' + (lerp(0, 6, e) / sc).toFixed(1) + 'px #FCF9FD, 0 ' + (16 / sc).toFixed(0) + 'px ' + (36 / sc).toFixed(0) + 'px rgba(20,0,35,' + (0.5 * e).toFixed(2) + ')');
+      // Borda de papel e sombra fixas (CSS), ligadas uma vez: recalculá-las a
+      // cada quadro repintava os três cartões inteiros.
+      classe(c, 'cartao', true);
     });
     // O computador cai sobre os três e é riscado duas vezes.
     var w = seg(p, RISCA[0], RISCA[1]);
@@ -222,14 +239,14 @@
   var sujo = true, ultimoP = -1;
   function desenharPalco(p, t) {
     var est = cenas[0], pos = cenas[1], lo = cenas[2];
-    poseRepositor(est, t);
-    poseVigilante(pos, p);
-    poseAtendente(lo, p);
-    cenas.forEach(function (c, i) { vivo(c, t, i); });
-
-    if (p === ultimoP && !sujo) return;
-    ultimoP = p; sujo = false;
-
+    if (p !== ultimoP || sujo) { ultimoP = p; sujo = false; montarCena(p, est, pos, lo); }
+    // Gestos só de quem está à vista: mexer no SVG de um cenário escondido
+    // suja o desenho dele à toa e encarece a hora em que ele aparece.
+    if (!est.oculta) poseRepositor(est, t);
+    if (!pos.oculta) poseVigilante(pos, p);
+    if (!lo.oculta) poseAtendente(lo, p);
+  }
+  function montarCena(p, est, pos, lo) {
     var u1 = seg(p, MERG1[0], MERG1[1]), u2 = seg(p, MERG2[0], MERG2[1]), v = seg(p, RECUO[0], RECUO[1]);
     if (v > 0) { recuo(v, p); return; }
     estilo(pcEl, 'opacity', '0');
@@ -252,10 +269,10 @@
   var viradaEl = document.getElementById('virada');
   var vStage = viradaEl.querySelector('[data-sc-stage]');
   var fone = document.getElementById('fone');
-  var trilhas = Array.prototype.map.call(viradaEl.querySelectorAll('.trilha'), function (li, i) {
-    var img = li.querySelector('.trilha__img');
-    img.innerHTML = Cenas.plana(img.getAttribute('data-cena'), 'm' + i, { acenando: true });
-    return { img: img, txt: li.querySelector('.trilha__txt'), barra: li.querySelector('s'), dx: 0, dy: 0, s0: 1 };
+  // As miniaturas são as imagens dos mesmos cenários (assets/cenas, gerados
+  // por lab/cenas-raster.mjs a partir de cenas.js).
+  var trilhas = Array.prototype.map.call(viradaEl.querySelectorAll('.trilha'), function (li) {
+    return { img: li.querySelector('.trilha__img'), txt: li.querySelector('.trilha__txt'), barra: li.querySelector('s'), dx: 0, dy: 0, s0: 1 };
   });
   var CHEIA = [0.72, 0.48, 0.3];
 
@@ -283,11 +300,6 @@
     fone.classList.toggle('off', p > 0.64);
   }
 
-  // --------------------------------------------------------------- resultados --
-  Array.prototype.forEach.call(document.querySelectorAll('.caso__num'), function (el, i) {
-    el.style.backgroundImage = Cenas.dataURL(el.getAttribute('data-cena'), 'r' + i, { inteira: true, acenando: true });
-  });
-
   // Carimbo da ficha: bate uma vez, quando a ficha está inteira na tela.
   var carimbo = document.getElementById('carimbo-custo');
   if ('IntersectionObserver' in window) {
@@ -312,10 +324,57 @@
   function medirTudo() { medirPalco(); medirVirada(); }
   addEventListener('resize', function () { requestAnimationFrame(medirTudo); }, { passive: true });
 
+  // A cena segue a rolagem com um atraso curto (~0,1 s), como um vídeo que
+  // alcança a agulha. Num celular que perde quadros (iPhone em economia de
+  // energia roda a 30 fps, e um impulso de dedo atravessa um mergulho inteiro
+  // entre dois quadros), isso garante que o mergulho e os gestos passem pelos
+  // quadros do meio, em vez de pular direto para o fim.
+  var visto = { palco: -1, virada: -1 }, antes = 0;
+  window.__cenaVista = visto; // lido por lab/perf.mjs
+  function seguir(chave, alvo, dt) {
+    var v = visto[chave];
+    if (v < 0 || reduz) return (visto[chave] = alvo);
+    var nv = v + (alvo - v) * (1 - Math.exp(-dt / 95));
+    if (Math.abs(alvo - nv) < 0.0004) nv = alvo;
+    return (visto[chave] = nv);
+  }
   function quadro(t) {
-    if (atoPalco && (atoPalco.live || !abertura.feita)) desenharPalco(atoPalco.p, t);
-    if (atoVirada && atoVirada.live) desenharVirada(atoVirada.p);
+    var dt = Math.min(t - (antes || t), 100); antes = t;
+    if (atoPalco && (atoPalco.live || !abertura.feita)) desenharPalco(seguir('palco', atoPalco.p, dt), t);
+    if (atoVirada && atoVirada.live) desenharVirada(seguir('virada', atoVirada.p, dt));
+    if (diag) diag(t, atoPalco ? visto.palco : 0, atoVirada ? visto.virada : 0);
     requestAnimationFrame(quadro);
+  }
+
+  // ?diag: um painel com o que este aparelho está fazendo de verdade (quadros
+  // por segundo, pior quadro, e quantos quadros cada efeito chegou a desenhar).
+  // Feito para abrir no iPhone e mandar um print.
+  var diag = null;
+  if (/[?&]diag\b/.test(location.search)) {
+    var painelD = document.createElement('pre');
+    painelD.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:200;margin:0;padding:8px 10px;max-width:calc(100vw - 16px);' +
+      'background:rgba(20,0,35,.88);color:#fff;font:11px/1.35 ui-monospace,Menlo,monospace;border-radius:6px;pointer-events:none;white-space:pre-wrap';
+    corpo.appendChild(painelD);
+    var JAN = [['mergulho 1', 'palco', MERG1], ['continência', 'palco', VIGIA], ['mergulho 2', 'palco', MERG2],
+      ['aceno', 'palco', ATENDE], ['recuo', 'palco', RECUO], ['computador', 'palco', RISCA], ['trilhas', 'virada', [0.04, 0.46]]];
+    var cont = JAN.map(function () { return {}; }), dts = [], ultimoT = 0, ultimoTxt = 0;
+    diag = function (t, pp, pv) {
+      if (ultimoT) { dts.push(t - ultimoT); if (dts.length > 120) dts.shift(); }
+      ultimoT = t;
+      JAN.forEach(function (j, i) {
+        var p = j[1] === 'palco' ? pp : pv;
+        if (p > j[2][0] && p < j[2][1]) cont[i][p.toFixed(3)] = 1;
+      });
+      if (t - ultimoTxt < 400) return;
+      ultimoTxt = t;
+      var s = dts.slice().sort(function (a, b) { return a - b; });
+      var med = s[s.length >> 1] || 0, pior = s[s.length - 1] || 0;
+      painelD.textContent =
+        'fps ' + (med ? (1000 / med).toFixed(0) : '-') + ' · pior quadro ' + pior.toFixed(0) + ' ms\n' +
+        'movimento reduzido: ' + (reduz ? 'SIM' : 'não') + ' · dpr ' + devicePixelRatio + ' · ' + innerWidth + 'x' + innerHeight + '\n' +
+        'palco ' + pp.toFixed(2) + ' · virada ' + pv.toFixed(2) + '\n' +
+        JAN.map(function (j, i) { return j[0] + ': ' + Object.keys(cont[i]).length; }).join(' · ');
+    };
   }
 
   // -------------------------------------------------------------- carregando --
